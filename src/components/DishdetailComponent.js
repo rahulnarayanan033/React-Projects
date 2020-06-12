@@ -1,6 +1,82 @@
-import React from 'react';
-import { Card, CardImg, CardBody, CardTitle, CardText, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React, { Component } from 'react';
+import { Card, CardImg, CardBody, CardTitle, CardText, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Row, Label } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Control, LocalForm, Errors } from 'react-redux-form';
+
+const required = (val) => val && val.length;
+const minLength = (len) => (val) => val && val.length>=len;
+const maxLength = (len) => (val) => !(val) || val.length<=len;
+
+class CommentForm extends Component{
+    constructor(props){
+        super(props);
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.state = {
+            isModalOpen : false
+        }
+    }
+    toggleModal(){
+        this.setState({
+            isModalOpen : !this.state.isModalOpen
+        })
+    }
+
+    handleSubmit(values) {
+        this.toggleModal();
+        console.log(values);
+        alert("Current state is: " + JSON.stringify(values));
+    }
+
+    render(){
+        return(
+            <div>
+                <Button outline onClick={this.toggleModal}>
+                    <i className="fas fa-pencil-alt"></i>Submit Button
+                </Button>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+                    <ModalBody>
+                        <LocalForm className="col-md-12" onSubmit={(values) => this.handleSubmit(values)}>
+                            <Row className="form-group">
+                                <Label htmlFor="rating">Rating</Label>
+                                <Control.select id="rating" name="rating" className="form-control" model=".rating">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </Control.select>
+                            </Row>
+                            <Row className="form-group">
+                                <Label htmlFor="name">Your Name</Label>
+                                <Control.text id="name" model=".name" placeholder="Your Name" className="form-control"
+                                validators={{
+                                    required, minLength : minLength(3) , maxLength : maxLength(15)
+                                }}/>
+                                <Errors className="text-danger"
+                                    model=".name"
+                                    messages={{
+                                        required : "Required",
+                                        minLength : "Must be greater than 2 characters",
+                                        maxLength : "Must be less than 15 characters"
+                                    }}
+                                />
+                            </Row>
+                            <Row className="form-group">
+                                <Label htmlFor="comment">Comment</Label>
+                                <Control.textarea id="comment" model=".comment" className="form-control" rows="6"/>
+                            </Row>
+                            <Row className="form-group">
+                                <Button type="submit" value="submit" color="primary">Submit</Button>
+                            </Row>
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
+            </div>
+        )
+    }
+}
 
 function RenderDish({dish}){
         return (
@@ -28,6 +104,7 @@ function RenderComments({comments}){
                     );
                 })}
             </ul>
+            <CommentForm/>
         </div>
     )
 }
