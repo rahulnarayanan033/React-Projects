@@ -21,6 +21,5 @@ export const ConfigureStore = () => {
         }),
         applyMiddleware(thunk , logger)
     );
-    console.log(applyMiddleware(thunk , logger))
     return store;
 }
