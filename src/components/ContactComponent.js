@@ -8,7 +8,7 @@ const maxLength = (len) => (val) => !(val) || (val.length <= len);
 const minLength = (len) => (val) => val && (val.length >= len );
 const isNumber = (val) => !isNaN(Number(val));
 const validEmail = (val) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val);
-
+var self;
 class Contact extends Component {
     constructor(props){
         super(props);
@@ -18,13 +18,14 @@ class Contact extends Component {
 
 
     handleSubmit(values){
-        console.log('Current State is: '+ JSON.stringify(values));
-        alert('Curent State is: '+ JSON.stringify(values));
+        this.props.postFeedback(values.firstname , values.lastname , values.telnum , values.email , values.agree , values.contactType , values.message)
+        .then(function(){
+            alert(JSON.stringify((self.props.feed.feed)))
+        })
         this.props.resetFeedbackForm();
     }
-
-    
     render(){
+        self = this;
         return(
             <div className="container">
                 <Breadcrumb>
@@ -175,9 +176,14 @@ class Contact extends Component {
                                 </Col>
                             </Row>
                             <Row className="form-group">
-                                <Col md={{size: 10, offset: 2}}>
+                                <Col md={{size: 2, offset: 2}}>
                                     <Button type="submit" color="primary">
                                         Send Feedback
+                                    </Button>
+                                </Col>
+                                <Col md={{size:2}}>
+                                    <Button outline type="reset" color="primary">
+                                        Cancel
                                     </Button>
                                 </Col>
                             </Row>
@@ -188,5 +194,6 @@ class Contact extends Component {
         );
     }
 }
+
 
 export default Contact;
